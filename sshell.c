@@ -56,7 +56,7 @@ int main(void)
     
     while (1) {
         char *nl;
-        //int retval;
+        int retval =0;
         
         /* Print prompt */
         printf("sshell@ucd$ ");
@@ -79,10 +79,20 @@ int main(void)
         
         /* Builtin exit command */
         if (!strcmp(cmd, "exit")) {
-            printf("Bye...\n");
-            return 0;
+            fprintf(stderr, "Bye...\n");
+            fprintf(stderr, "+ completed '%s' [%d]\n", cmd, retval);
+            break;
         }
-
+        
+//        if (!strcmp(cmd, "pwd")) {
+//           char *getcwd(char *buf, size_t size);
+//           char cwd[CMDLINE_MAX];
+//           if (getcwd(cwd, sizeof(cwd)) != NULL) {
+//               printf("Current working directory: %s\n", cwd);
+//           } else {
+//               perror("getcwd() error");
+//           }
+//       }
         
         
 //        *********** ignore **************
@@ -138,6 +148,7 @@ int main(void)
         
         if (!strcmp(command, "cd")){
             chdir(args[1]);
+            fprintf(stderr, "+ completed '%s' [%d]\n", cmd, retval);
         }
         
         
