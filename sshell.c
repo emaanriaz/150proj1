@@ -79,7 +79,7 @@ int main(void)
         
         /* Builtin exit command */
         if (!strcmp(cmd, "exit")) {
-            fprintf(stdout, "Bye...\n");
+            printf("Bye...\n");
             return 0;
         }
 
@@ -176,9 +176,6 @@ int main(void)
             perror("fork");
             exit(1);
         }
-        
-        
-       
     }
     return EXIT_SUCCESS;
 }
