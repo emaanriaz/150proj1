@@ -1,3 +1,5 @@
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -79,7 +81,7 @@ int main(void)
         
         /* Builtin exit command */
         if (!strcmp(cmd, "exit")) {
-            fprintf(stderr, "Bye...\n");
+            printf("Bye...\n");
             fprintf(stderr, "+ completed '%s' [%d]\n", cmd, retval);
             break;
         }
@@ -146,35 +148,13 @@ int main(void)
         // inside redirection, parse to find argument that gives file name.
         // then call dup2 using that file name
         
-        if (!strcmp(command, "cd")){
-            chdir(args[1]);
-            fprintf(stderr, "+ completed '%s' [%d]\n", cmd, retval);
-        }
+        
         
         
         // fork, wait, exec
         pid_t pid = fork();
         if (pid == 0) {
-            int arrowIndex= -1;
             
-            
-            for(int i=0; i<argIndex; i++){
-                if (!strcmp(args[i], ">")){
-                    arrowIndex = i;
-                }
-            }
-            
-            if (args[arrowIndex + 1] == NULL){
-                printf("Error: no output file\n");
-                return 0;
-            }
-            if (arrowIndex > -1){
-                int fd = open(args[arrowIndex+1],O_WRONLY | O_CREAT | O_TRUNC , 0644);
-                dup2(fd, STDOUT_FILENO);
-                close(fd);
-            }
-            
-            args[arrowIndex] = NULL;
             execvp(command, args);
             perror("execvp");
             exit(1);
