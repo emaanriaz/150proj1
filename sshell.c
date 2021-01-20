@@ -81,7 +81,7 @@ int main(void)
         
         /* Builtin exit command */
         if (!strcmp(cmd, "exit")) {
-            printf("Bye...\n");
+            fprintf(stderr, "Bye...\n");
             fprintf(stderr, "+ completed '%s' [%d]\n", cmd, retval);
             break;
         }
