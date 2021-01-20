@@ -80,6 +80,7 @@ int main(void)
         /* Builtin exit command */
         if (!strcmp(cmd, "exit")) {
             fprintf(stderr, "Bye...\n");
+            fflush(stderr);
             return 0;
         }
 
