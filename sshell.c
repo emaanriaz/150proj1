@@ -79,9 +79,10 @@ int main(void)
         
         /* Builtin exit command */
         if (!strcmp(cmd, "exit")) {
-            fprintf(stderr, "Byeeee...\n");
-            break;
+            fprintf(stderr, "Bye...\n");
+            return 0;
         }
+
         
         
 //        *********** ignore **************
@@ -177,16 +178,7 @@ int main(void)
         }
         
         
-        // prints working directory
-        if (!strcmp(cmd, "pwd")) {
-            char *getcwd(char *buf, size_t size);
-            char cwd[CMDLINE_MAX];
-            if (getcwd(cwd, sizeof(cwd)) != NULL) {
-                printf("Current working directory: %s\n", cwd);
-            } else {
-                perror("getcwd() error");
-            }
-        }
+       
     }
     return EXIT_SUCCESS;
 }
