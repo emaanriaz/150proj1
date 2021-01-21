@@ -13,44 +13,27 @@
 #define CMDLINE_MAX 512
 #define ARGS_MAX 16
 
-struct parsedCommand {
-    char *command;
-    char *parsed;
-    char **arguments;
-    int argCount;
-};
-
-
-// struct is not being used to handle parsing. parsing starts on line 104
-struct parsedCommand input_parser(char *command)
-{
-    //        struct parsedCommand parseobject = {NULL};
-    //        int i = 0;
-    //        char  * token = strtok(input, " ");
-    //        while (token != NULL) {
-    //            parseobject.argumentsArray[i] = token;
-    //            token = strtok(NULL, " ");
-    //            i++;
-    //        }
-    //        parseobject.argumentsArray[i]= NULL;
-    //        return parseobject;
-    
-    char *cmdArgs[ARGS_MAX];
-    struct parsedCommand input;
-    input.command = strdup(command);
-    input.parsed = strtok(input.command, " ");
-    input.argCount = 0;
-    for (char *arg = strtok(NULL, " "); arg; arg = strtok(NULL, " ")){
-        cmdArgs[input.argCount++] = arg;
+ 
+int outputRedirection(char *args[ARGS_MAX], int argIndex){
+    int arrowIndex= -1;
+    for(int i=0; i<argIndex; i++){
+        if (!strcmp(args[i], ">")){
+            arrowIndex = i;
+            args[arrowIndex] = NULL;
+        }
     }
-    input.arguments = malloc(input.argCount * sizeof *input.arguments);
-    memcpy(input.arguments, cmdArgs, input.argCount * sizeof *input.arguments);
-    return input;
     
+    if (args[arrowIndex + 1] == NULL){
+        printf("Error: no output file\n");
+        return 0;
+    }
+    if (arrowIndex > -1){
+        int fd = open(args[arrowIndex+1],O_WRONLY | O_CREAT | O_TRUNC , 0644);
+        dup2(fd, STDOUT_FILENO);
+        close(fd);
+    }
+    return 1;
 }
-
-
-
 
 int main(void)
 {
@@ -86,83 +69,38 @@ int main(void)
             break;
         }
         
-//        if (!strcmp(cmd, "pwd")) {
-//           char *getcwd(char *buf, size_t size);
-//           char cwd[CMDLINE_MAX];
-//           if (getcwd(cwd, sizeof(cwd)) != NULL) {
-//               printf("Current working directory: %s\n", cwd);
-//           } else {
-//               perror("getcwd() error");
-//           }
-//       }
-        
-        
-//        *********** ignore **************
-//        struct parsedCommand input = input_parser(cmd);
-//        printf("Command (%d args): %s", input.argCount, input.parsed);
-//        for (int i = 0; i < input.argCount; ++i)
-//            printf(" %s", input.arguments[i]);
-//        printf("\n");
-//
-//
-//        char *argument = NULL;
-//        for (int i = 0; i < input.argCount; ++i)
-//            argument = input.arguments[i];
-//        char *args[] = {input.parsed, argument, NULL};
-//
-          
         
         char *args[ARGS_MAX],
         *delim = " \n",
-        *token;
+        *token,
+        *command;
         int argIndex = 0;
-        char *command;
-        
         command = strdup(cmd);
         
-        
-//        if the command has an > in it, then you should add white space around the >
-//        int i =0;
-//        while(cmd[i] != '\0'){
-//            if (!strcmp(&cmd[i], ">")){
-//                strcpy(&cmd[i], " > ");
-//            }
-//            i++;
-//        }
         
         for (int i = 0; i < ARGS_MAX; i++)  /* set all pointers NULL */
             args[i] = NULL;
         
         for (token = strtok (command, delim); token && argIndex + 1 < ARGS_MAX; token = strtok (NULL, delim)) {
             args[argIndex++] = token;
-            
         }
         
-        
-    
+        int result = 0;
+        if (!strcmp(command, "cd")){
+             result = chdir(args[1]);
+            if (result != 0){
+                perror("cd");
+            }
+            else {
+                fprintf(stderr, "+ completed '%s' [%d]\n", cmd, retval);
+            }
+            continue;
+        }
         
         // fork, wait, exec
         pid_t pid = fork();
         if (pid == 0) {
-            int arrowIndex= -1;
-            for(int i=0; i<argIndex; i++){
-                if (!strcmp(args[i], ">")){
-                    arrowIndex = i;
-                    args[arrowIndex] = NULL;
-                }
-            }
-            
-            if (args[arrowIndex + 1] == NULL){
-                printf("Error: no output file\n");
-                return 0;
-            }
-            if (arrowIndex > -1){
-                int fd = open(args[arrowIndex+1],O_WRONLY | O_CREAT | O_TRUNC , 0644);
-                dup2(fd, STDOUT_FILENO);
-                close(fd);
-            }
-            
-            
+            outputRedirection(args, argIndex);
             execvp(command, args);
             perror("execvp");
             exit(1);
@@ -170,17 +108,13 @@ int main(void)
             // parent execution
             int status;
             waitpid(pid, &status, 0); // suspends execution of current process until child has exited/signaled
-            fprintf(stderr, "+ completed '%s' [%d]\n\n", cmd, WEXITSTATUS(status));
+            fprintf(stderr, "+ completed '%s' [%d]\n", cmd, WEXITSTATUS(status));
         } else {
             perror("fork");
             exit(1);
         }
         
-        if (!strcmp(command, "cd")){
-             chdir(args[1]);
-             
-        }
-    }
+            }
     
     return EXIT_SUCCESS;
 }
