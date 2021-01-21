@@ -110,9 +110,7 @@ int main(void)
 //            argument = input.arguments[i];
 //        char *args[] = {input.parsed, argument, NULL};
 //
-//        if (!strcmp(input.parsed, "cd")){
-//            chdir(input.arguments[0]);
-//        }
+          
         
         char *args[ARGS_MAX],
         *delim = " \n",
@@ -140,16 +138,8 @@ int main(void)
             
         }
         
-//      ********* ignore *********
-//        if(strstr(cmd, ">")  !=NULL ){
-//            redirection(cmd);
-//        }
-        // if string contains > then call redirection function
-        // inside redirection, parse to find argument that gives file name.
-        // then call dup2 using that file name
         
-        
-        
+    
         
         // fork, wait, exec
         pid_t pid = fork();
@@ -180,11 +170,17 @@ int main(void)
             // parent execution
             int status;
             waitpid(pid, &status, 0); // suspends execution of current process until child has exited/signaled
-            fprintf(stderr, "+ completed '%s' [%d]\n\n", cmd , WEXITSTATUS(status));
+            fprintf(stderr, "+ completed '%s' [%d]\n\n", cmd, WEXITSTATUS(status));
         } else {
             perror("fork");
             exit(1);
         }
+        
+        if (!strcmp(command, "cd")){
+             chdir(args[1]);
+             
+        }
     }
+    
     return EXIT_SUCCESS;
 }
