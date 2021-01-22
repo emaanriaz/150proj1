@@ -13,7 +13,6 @@
 #define CMDLINE_MAX 512
 #define ARGS_MAX 16
 
-
 int outputRedirection(char *args[ARGS_MAX], int argIndex){
     int arrowIndex= -1;
     for(int i=0; i<argIndex; i++){
@@ -77,7 +76,6 @@ int main(void)
         
         // parsing by space
         for (token = strtok (command, delim); token && argIndex + 1 < ARGS_MAX; token = strtok (NULL, delim)) {
-            
             if (!strcmp(token, ">")){
                 arrow_i = argIndex;
             }
@@ -85,7 +83,7 @@ int main(void)
         }
         
         
-        //Buil in command - cd
+        //Built in command - cd
         int result = 0;
         if (!strcmp(command, "cd")){
              result = chdir(args[1]);
