@@ -22,14 +22,6 @@ int outputRedirection(char *args[ARGS_MAX], int argIndex){
             args[arrowIndex] = NULL;
         }
     }
-    
-    if (args[arrowIndex + 1] == NULL){
-        return 0;
-    }
-
-    if(arrowIndex == 0){
-        return 0;
-    }
 
     if (arrowIndex > -1){
         int fd = open(args[arrowIndex+1],O_WRONLY | O_CREAT | O_TRUNC , 0644);
