@@ -21,8 +21,7 @@ we can use a continue statement to skip the fork and force the next iteration
 of the loop. 
 
 In phase 4 we gave the shell the ability to redirect its output to a specified
-file. We make a call to the outputRedirection function inside the child 
-process of the fork so that. When we call the output redirection function from 
+file. When we call the output redirection function from 
 main, we want to make sure that output redirection only takes place when the 
 command contains >.  So, inside the output redirection function we first 
 create a variable called arrowIndex and set it to -1. Then, we loop through
