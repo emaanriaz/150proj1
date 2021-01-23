@@ -125,7 +125,7 @@ int main(void)
         if (pid == 0) {
             outputRedirection(args, argIndex);
             execvp(command, args);
-            fprintf(stderr, "Error: command not found");
+            fprintf(stderr, "Error: command not found\n");
             exit(1);
         } else if (pid > 0 ) {
             // parent execution
