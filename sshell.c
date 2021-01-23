@@ -83,7 +83,7 @@ int main(void)
         if (!strcmp(command, "cd")){
              result = chdir(args[1]);
             if (result != 0){
-                perror("cd");
+                fprintf(stderr, "Error cannot cd into directory\n");
             }
             else {
                 fprintf(stderr, "+ completed '%s' [%d]\n", cmd, retval);
@@ -125,12 +125,12 @@ int main(void)
         if (pid == 0) {
             outputRedirection(args, argIndex);
             execvp(command, args);
-            perror("execvp");
+            fprintf(stderr, "Error: command not found");
             exit(1);
         } else if (pid > 0 ) {
             // parent execution
             int status;
-            waitpid(pid, &status, 0); // suspends execution of current process until child has exited/signaled
+            waitpid(pid, &status, 0); // suspends execution of current process until child has exited
             fprintf(stderr, "+ completed '%s' [%d]\n", cmd, WEXITSTATUS(status));
         } else {
             perror("fork");
