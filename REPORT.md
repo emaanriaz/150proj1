@@ -21,17 +21,17 @@ we can use a continue statement to skip the fork and force the next iteration
 of the loop. 
 
 In phase 4 we gave the shell the ability to redirect its output to a specified
-file. When we call the output redirection function from 
-main, we want to make sure that output redirection only takes place when the 
-command contains >.  So, inside the output redirection function we first 
-create a variable called arrowIndex and set it to -1. Then, we loop through
-the arguments to compare each argument to >. If > is present, we set the 
-loop’s current index equal to arrowIndex so that we can keep track of the 
-position of the > in the array.  Now that we have the position of the > in the 
-array, we know for sure that the arrowIndex has to be greater than -1. Thus, 
-we can safely open the file and call dup2 to redirect the output. We know that 
-the filename from the command line input will be directly after the >, so we 
-can represent that position by adding 1 to arrowIndex. 
+file. When we call the output redirection function from main, we want to make 
+sure that output redirection only takes place when the command contains >.  So,
+inside the output redirection function we loop through the arguments and compare 
+each argument to >. If > is present, we set the loop’s current index equal to a 
+variable called arrowIndex so that we can keep track of the position of the > in 
+the array. Since we are now certain that > exists, we can safely open the file and
+call dup2 to redirect the output. Since we know that the filename from the command 
+line input will be directly after the >, we can represent that position by adding 1
+to arrowIndex. 
+
+Our shell does not have implementations for piping or setting variables. 
 
 To test our shell, we initially used a trial and error method to ensure that 
 our output was the same as the output in the reference shell. Then we used 
