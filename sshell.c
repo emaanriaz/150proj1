@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/wait.h>
 #include <fcntl.h>
+#include <signal.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 #define CMDLINE_MAX 512
@@ -28,30 +29,29 @@ int outputRedirection(char *args[ARGS_MAX], int argIndex){
 int main(void)
 {
     char cmd[CMDLINE_MAX];
-    
     while (1) {
         char *nl;
         int retval = 0;
         
-        /* Print prompt */
+        // Print prompt
         printf("sshell@ucd$ ");
         fflush(stdout);
         
-        /* Get command line */
+        // Get command line
         fgets(cmd, CMDLINE_MAX, stdin);
         
-        /* Print command line if stdin is not provided by terminal */
+        // Print command line if stdin is not provided by terminal
         if (!isatty(STDIN_FILENO)) {
             printf("%s", cmd);
             fflush(stdout);
         }
         
-        /* Remove trailing newline from command line */
+        // Remove trailing newline from command line
         nl = strchr(cmd, '\n');
         if (nl)
             *nl = '\0';
         
-        /* Builtin exit command */
+        // Builtin exit command
         if (!strcmp(cmd, "exit")) {
             fprintf(stderr, "Bye...\n");
             fprintf(stderr, "+ completed '%s' [%d]\n", cmd, retval);
@@ -62,9 +62,9 @@ int main(void)
         *delim = " \n",
         *token,
         *command;
-        int argIndex = 0;
+        int argIndex = 0,
+        arrow_index = 0;
         command = strdup(cmd);
-        int arrow_index = 0;
         
         for (int i = 0; i < ARGS_MAX; i++)
             args[i] = NULL;
@@ -77,6 +77,7 @@ int main(void)
             args[argIndex++] = token;
         }
         
+        // Builtin cd command
         int result = 0;
         if (!strcmp(command, "cd")){
              result = chdir(args[1]);
@@ -89,6 +90,7 @@ int main(void)
             continue;
         }
         
+        // Builtin pwd command
         if (!strcmp(command, "pwd")) {
            char *getcwd(char *buf, size_t size);
            char cwd[CMDLINE_MAX];
@@ -101,6 +103,12 @@ int main(void)
             continue;
         }
         
+        // Error management
+        if  (argIndex > 14) {
+            fprintf(stderr, "Error: too many arguments\n");
+            continue;
+        }
+        
         if (!strcmp(command, ">")){
             fprintf(stderr, "Error: missing command\n");
             continue;
@@ -110,7 +118,7 @@ int main(void)
             fprintf(stderr, "Error: no output file\n");
             continue;
         }
-        
+
         // fork, exec, wait
         pid_t pid = fork();
         if (pid == 0) {
