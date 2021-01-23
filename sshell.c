@@ -1,16 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
 #include <fcntl.h>
-#include <signal.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include <unistd.h>
 
 #define CMDLINE_MAX 512
 #define ARGS_MAX 16
-
 
 int outputRedirection(char *args[ARGS_MAX], int argIndex){
     int arrowIndex= -1;
