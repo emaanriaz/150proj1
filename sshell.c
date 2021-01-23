@@ -1,5 +1,3 @@
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,6 +11,7 @@
 #define CMDLINE_MAX 512
 #define ARGS_MAX 16
 
+
 int outputRedirection(char *args[ARGS_MAX], int argIndex){
     int arrowIndex= -1;
     for(int i=0; i<argIndex; i++){
@@ -21,7 +20,7 @@ int outputRedirection(char *args[ARGS_MAX], int argIndex){
             args[arrowIndex] = NULL;
         }
     }
-
+    
     if (arrowIndex > -1){
         int fd = open(args[arrowIndex+1],O_WRONLY | O_CREAT | O_TRUNC , 0644);
         dup2(fd, STDOUT_FILENO);
@@ -36,7 +35,7 @@ int main(void)
     
     while (1) {
         char *nl;
-        int retval =0;
+        int retval = 0;
         
         /* Print prompt */
         printf("sshell@ucd$ ");
@@ -68,8 +67,8 @@ int main(void)
         *token,
         *command;
         int argIndex = 0;
-        int arrow_i = 0;
         command = strdup(cmd);
+        int arrow_index = 0;
         
         for (int i = 0; i < ARGS_MAX; i++)
             args[i] = NULL;
@@ -77,13 +76,11 @@ int main(void)
         // parsing by space
         for (token = strtok (command, delim); token && argIndex + 1 < ARGS_MAX; token = strtok (NULL, delim)) {
             if (!strcmp(token, ">")){
-                arrow_i = argIndex;
+                arrow_index = argIndex;
             }
             args[argIndex++] = token;
         }
         
-        
-        //Built in command - cd
         int result = 0;
         if (!strcmp(command, "cd")){
              result = chdir(args[1]);
@@ -96,7 +93,6 @@ int main(void)
             continue;
         }
         
-        //Built in command - pwd
         if (!strcmp(command, "pwd")) {
            char *getcwd(char *buf, size_t size);
            char cwd[CMDLINE_MAX];
@@ -109,14 +105,12 @@ int main(void)
             continue;
         }
         
-        //Error handling for missing command before the output redirection
         if (!strcmp(command, ">")){
             fprintf(stderr, "Error: missing command\n");
             continue;
         }
-
-        //Error handling for no output file after output redirection
-        if(args[arrow_i + 1] == NULL && arrow_i != 0){
+        
+        if(args[arrow_index + 1] == NULL && arrow_index != 0){
             fprintf(stderr, "Error: no output file\n");
             continue;
         }
