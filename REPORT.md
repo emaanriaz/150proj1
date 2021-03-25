@@ -29,9 +29,7 @@ variable called arrowIndex so that we can keep track of the position of the > in
 the array. Since we are now certain that > exists, we can safely open the file and
 call dup2 to redirect the output. Since we know that the filename from the command 
 line input will be directly after the >, we can represent that position by adding 1
-to arrowIndex. 
-
-Our shell does not have implementations for piping or setting variables. 
+to arrowIndex.  
 
 To test our shell, we initially used a trial and error method to ensure that 
 our output was the same as the output in the reference shell. Then we used 
